@@ -16,7 +16,7 @@ const searchForm = `
         <input type="search" id="search-input" class="search-input" placeholder="Search...">
         <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
     </form>
-`;
+    `;
 searchContainer.insertAdjacentHTML('beforeend', searchForm);
 
 /**
@@ -90,19 +90,14 @@ function modalDisplay(card) {
  * Display modal by clicking on employee card
  */
 gallery.addEventListener('click', e => {
-    const employeeCard = e.target.closest('.card');
-    console.log(employeeCard);
-    modalDisplay(employeeCard);
+    modalDisplay(e.target.closest('.card'));
 });
 
 /**
  * Close modal window
  */
-body.addEventListener('click', e => {
-    const closeBtn = document.querySelector('.modal-close-btn');
-    console.log(closeBtn);
-    if (e.target !== closeBtn) {
-        console.log('what?');
-        body.removeChild('.modal-container');
-    }
+document.addEventListener('click', e => {
+    if (e.target === document.querySelector('strong') || e.target.id === 'modal-close-btn') {
+        document.querySelector('.modal-container').remove();
+    }   
 });

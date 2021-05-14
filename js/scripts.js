@@ -39,11 +39,10 @@ function searchForEmployee() {
 
 /**
  * Function to create employee card 
- * @param {json} data
+ * @param {json} data 
  */
 function generateCard(data) {
     employees = data.results;
-    console.log(employees);
     for (let i = 0; i < 12; i++) {
         const employeeCard = `
             <div class="card" data-index="${[i]}">
@@ -130,7 +129,7 @@ function reformatBirthday(date) {
         generateCard(data);
     } )
     .catch((error) => {
-        gallery.insertAdjacentHTML('beforeend', `Uh oh, something went wrong!`)
+        gallery.insertAdjacentHTML('beforeend', `Uh oh, something went wrong!`);
         console.error('Error:', error);
     });
 

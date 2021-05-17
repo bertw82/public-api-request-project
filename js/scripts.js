@@ -90,7 +90,7 @@ function createModal(employee, index) {
     modalContainer.className = 'modal-container';
     modalContainer.dataset.index = index;
     modalContainer.insertAdjacentHTML('beforeend',  
-        `<div class="modal">
+        `<div class="modal animate__animated animate__fadeInRight">
             <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
             <div class="modal-info-container">
                 <img class="modal-img" src="${employee.picture.large}" alt="profile picture">
@@ -103,7 +103,7 @@ function createModal(employee, index) {
                 <p class="modal-text">Birthday: ${reformatBirthday(employee.dob.date)}</p>
             </div>
          </div>
-        <div class="modal-btn-container">
+        <div class="modal-btn-container animate__animated animate__fadeInLeft">
             <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
             <button type="button" id="modal-next" class="modal-next btn">Next</button>
         </div>`);

@@ -38,11 +38,7 @@ function searchForEmployee() {
         for (let i = 0; i < searchArray.length; i++) {
             generateCard(searchArray[i], i);
         } 
-    } else {
-        for (let i = 0; i < employees.length; i++) {
-            generateCard(employees[i], i);
-        } 
-    }
+    } 
 }
 
 /**
@@ -102,7 +98,7 @@ function createModal(employee, index) {
                 <p class="modal-text">${employee.location.street.number} ${employee.location.street.name}, ${employee.location.state} ${employee.location.postcode}</p>
                 <p class="modal-text">Birthday: ${reformatBirthday(employee.dob.date)}</p>
             </div>
-         </div>
+        </div>
         <div class="modal-btn-container animate__animated animate__fadeInLeft">
             <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
             <button type="button" id="modal-next" class="modal-next btn">Next</button>
@@ -197,5 +193,23 @@ document.addEventListener('click', e => {
     }
 });
 
+// use right or left arrow to view another employee while in modal
+// written with assistance from https://stackoverflow.com/questions/5597060/detecting-arrow-key-presses-in-javascript
+document.addEventListener('keydown', (e) => { 
+    const cards = document.querySelectorAll('.card');
+    if (e.key === "ArrowLeft") {
+        const dataIndex = document.querySelector('.modal-container').getAttribute('data-index');
+        if (dataIndex > 0 && dataIndex <= cards.length) {
+            removeModal(dataIndex);
+            modalDisplay(parseInt(dataIndex) -1);
+        } 
+    } else if (e.key === "ArrowRight") {
+        const dataIndex = document.querySelector('.modal-container').getAttribute('data-index');
+        if (dataIndex >=0 && dataIndex < cards.length - 1) {
+            removeModal(dataIndex);
+            modalDisplay(parseInt(dataIndex) + 1);
+        } 
+    }
+});
 
 

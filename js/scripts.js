@@ -184,10 +184,10 @@ document.addEventListener('click', e => {
     const cards = document.querySelectorAll('.card');
     if (e.target === document.getElementById('modal-next')) {
         const dataIndex = e.target.parentNode.parentNode.getAttribute('data-index');
-            if (dataIndex >=0 && dataIndex < cards.length - 1) {
-                removeModal(dataIndex);
-                modalDisplay(parseInt(dataIndex) + 1);
-            } 
+        if (dataIndex >=0 && dataIndex < cards.length - 1) {
+            removeModal(dataIndex);
+            modalDisplay(parseInt(dataIndex) + 1);
+        } 
     } else if (e.target === document.getElementById('modal-prev')) {
         const dataIndex = e.target.parentNode.parentNode.getAttribute('data-index');
         if (dataIndex > 0 && dataIndex <= cards.length) {

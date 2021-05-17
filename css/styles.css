@@ -63,6 +63,14 @@ header h1 {
     border: 1px solid rgba(50, 50, 50, 0.9);
 }
 
+.hide {
+    display: none;
+}
+
+.show {
+    display: block;
+}
+
 
 /* ===================================== 
    Gallery

@@ -6,6 +6,7 @@
  const searchContainer = document.querySelector('.search-container');
  const gallery = document.getElementById('gallery');
  let employees = [];
+ let searchArray = [];
  const body = document.querySelector('body');
 
 /**
@@ -26,14 +27,21 @@ function searchForEmployee() {
     // written with assistance from https://www.w3schools.com/howto/howto_js_filter_lists.asp 
     const input = document.getElementById('search-input');
     const filter = input.value.toUpperCase();
-    const employeeCard = document.querySelectorAll('.card');
-    for (let i = 0; i < employeeCard.length; i++) {
-        const name = employeeCard[i].querySelector('#name').textContent;
-        if (name.toUpperCase().indexOf(filter) > -1) {
-        employeeCard[i].style.display = '';
-        } else {
-        employeeCard[i].style.display = 'none';
-        }
+    searchArray = [];
+    searchArray = employees.filter(employee => 
+        employee.name.first.toUpperCase().indexOf(filter) > -1 ||
+        employee.name.last.toUpperCase().indexOf(filter) > - 1);
+    gallery.innerHTML = '';
+    if (searchArray.length === 0) {
+        gallery.innerHTML = `<h2 style="color: whitesmoke">I'm sorry, there are no matching employees</h2>`;
+    } else if (searchArray.length > 0) {
+        for (let i = 0; i < searchArray.length; i++) {
+            generateCard(searchArray[i], i);
+        } 
+    } else {
+        for (let i = 0; i < employees.length; i++) {
+            generateCard(employees[i], i);
+        } 
     }
 }
 
@@ -41,23 +49,20 @@ function searchForEmployee() {
  * Function to create employee card 
  * @param {json} data 
  */
-function generateCard(data) {
-    employees = data.results;
-    for (let i = 0; i < 12; i++) {
-        const employeeCard = `
-            <div class="card" data-index="${[i]}">
-                <div class="card-img-container">
-                    <img class="card-img" src="${employees[i].picture.large}" alt="profile picture">
-                </div>
-                <div class="card-info-container">
-                    <h3 id="name" class="card-name cap">${employees[i].name.first} ${employees[i].name.last}</h3>
-                    <p class="card-text">${employees[i].email}</p>
-                    <p class="card-text cap">${employees[i].location.city}, ${employees[i].location.state}</p>
-                </div>
+function generateCard(data, dataIndex) {
+    const employeeCard = `
+        <div class="card" data-index="${dataIndex}">
+            <div class="card-img-container">
+                <img class="card-img" src="${data.picture.large}" alt="profile picture">
             </div>
-        `;
-        gallery.insertAdjacentHTML('beforeend', employeeCard);
-    }
+            <div class="card-info-container">
+                <h3 id="name" class="card-name cap">${data.name.first} ${data.name.last}</h3>
+                <p class="card-text">${data.email}</p>
+                <p class="card-text cap">${data.location.city}, ${data.location.state}</p>
+            </div>
+        </div>
+    `;
+    gallery.insertAdjacentHTML('beforeend', employeeCard);
 }
 
 /**
@@ -65,7 +70,22 @@ function generateCard(data) {
  * @param {element} index 
  */
 function modalDisplay(index) {
-    const employee = employees[index];
+    const cards = document.querySelectorAll('.card');
+    if (cards.length < 11) {
+        const employeeSearch = searchArray[index];
+        createModal(employeeSearch, index);
+    } else {
+        const employeeRegular = employees[index];
+        createModal(employeeRegular, index);
+    }
+}
+
+/**
+ * Helper functions
+ */
+
+// create modal
+function createModal(employee, index) {
     const modalContainer = document.createElement('div');
     modalContainer.className = 'modal-container';
     modalContainer.dataset.index = index;
@@ -90,10 +110,6 @@ function modalDisplay(index) {
     body.appendChild(modalContainer);
 }
 
-/**
- * Helper functions
- */
-
 // remove modal from DOM
 function removeModal(index) {
     const modal = document.querySelector('.modal-container');
@@ -113,10 +129,10 @@ function reformatPhone(number) {
 
 // reformat birthday
 function reformatBirthday(date) {
-    const birthday = new Date(date);
-    const day = birthday.getDate();
-    const month = parseInt(birthday.getMonth()) + 1;
-    const year = birthday.getFullYear();
+    const birthday = date;
+    const month = birthday.slice(5,7);
+    const day = birthday.slice(8, 10);
+    const year = birthday.slice(0,4);
     return `${month}/${day}/${year}`;
 }
 
@@ -126,10 +142,13 @@ function reformatBirthday(date) {
  fetch('https://randomuser.me/api/?results=12&nat=us')
     .then(response => response.json())
     .then(data => {
-        generateCard(data);
-    } )
+        employees = data.results;
+        for (let i = 0; i < employees.length; i++) {
+            generateCard(employees[i], i)
+        }
+    })
     .catch((error) => {
-        gallery.insertAdjacentHTML('beforeend', `Uh oh, something went wrong!`);
+        gallery.insertAdjacentHTML('beforeend', `<h2 style="color: whitesmoke">Uh oh, something went wrong!</h2>`);
         console.error('Error:', error);
     });
 
@@ -144,11 +163,11 @@ gallery.addEventListener('click', e => {
 
 // Close modal window
 document.addEventListener('click', e => {
-    const strongX = document.querySelector('strong');
+    const strong = document.querySelector('strong');
     const closeButton = document.querySelector('#modal-close-btn');
-    const strongIndex = strongX.parentNode.parentNode.parentNode.getAttribute('data-index');
-    const closeButtonIndex = closeButton.parentNode.parentNode.getAttribute('data-index');
-    if (e.target === strongX || e.target === closeButton) {
+    if (e.target === strong || e.target === closeButton) {
+        const strongIndex = strong.parentNode.parentNode.parentNode.getAttribute('data-index');
+        const closeButtonIndex = closeButton.parentNode.parentNode.getAttribute('data-index');
         removeModal(strongIndex || closeButtonIndex);
     }
 });
@@ -162,15 +181,16 @@ document.addEventListener('input', e => {
 
 // click "next" or "prev" to view another employee in the modal 
 document.addEventListener('click', e => {
+    const cards = document.querySelectorAll('.card');
     if (e.target === document.getElementById('modal-next')) {
         const dataIndex = e.target.parentNode.parentNode.getAttribute('data-index');
-        if (dataIndex >=0 && dataIndex < 11) {
-            removeModal(dataIndex);
-            modalDisplay(parseInt(dataIndex) + 1);
-        } 
+            if (dataIndex >=0 && dataIndex < cards.length - 1) {
+                removeModal(dataIndex);
+                modalDisplay(parseInt(dataIndex) + 1);
+            } 
     } else if (e.target === document.getElementById('modal-prev')) {
         const dataIndex = e.target.parentNode.parentNode.getAttribute('data-index');
-        if (dataIndex > 0 && dataIndex <= 11) {
+        if (dataIndex > 0 && dataIndex <= cards.length) {
             removeModal(dataIndex);
             modalDisplay(parseInt(dataIndex) -1);
         } 

@@ -70,9 +70,19 @@ function modalDisplay(index) {
     if (cards.length < 11) {
         const employeeSearch = searchArray[index];
         createModal(employeeSearch, index);
+        if (index == 0) {
+            disablePrevButton();
+        } else if ( index == cards.length - 1) {
+            disableNextButton();
+        }
     } else {
         const employeeRegular = employees[index];
         createModal(employeeRegular, index);
+        if (index == 0) {
+            disablePrevButton();
+        } else if ( index == cards.length - 1) {
+            disableNextButton();
+        }
     }
 }
 
@@ -130,6 +140,20 @@ function reformatBirthday(date) {
     const day = birthday.slice(8, 10);
     const year = birthday.slice(0,4);
     return `${month}/${day}/${year}`;
+}
+
+
+// disable "prev" and "next" buttons
+function disablePrevButton() {
+    const prevBtn = document.getElementById('modal-prev');
+    prevBtn.disabled = true;
+    prevBtn.style.backgroundColor = 'silver';
+}
+
+function disableNextButton() {
+    const nextBtn = document.getElementById('modal-next');
+    nextBtn.disabled = true;
+    nextBtn.style.backgroundColor = 'silver';
 }
 
 /**
